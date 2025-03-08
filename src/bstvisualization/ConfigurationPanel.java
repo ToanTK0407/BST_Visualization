@@ -197,6 +197,10 @@ public class ConfigurationPanel extends JPanel {
     }
 
     private void handleAddNode(int data) {
+        if (bstPanel.isFlag()) {
+            System.out.println("Can't do this action now");
+            return;
+        }
         BSTNode node = bstTree.createNode(data);
         bstPanel.drawTree();
         System.out.println("Adding node: " + data);
@@ -209,13 +213,21 @@ public class ConfigurationPanel extends JPanel {
     }
 
     private void handleSearchNode(int data) {
+        if (bstPanel.isFlag()) {
+            System.out.println("Can't do this action now");
+            return;
+        }
         bstPanel.search(data);
         System.out.println("Searching node: " + data);
     }
 
     private void handleRemoveNode(int data) {
-        bstTree.delete(bstTree.root, data);
-        bstTree.root = bstTree.delete(bstTree.root, data);
+        if (bstPanel.isFlag()) {
+            System.out.println("Can't do this action now");
+            return;
+        }
+
+        bstTree.inOrder(bstTree.root);
         bstPanel.removeCircle(data);
         System.out.println("Removing node: " + data);
     }

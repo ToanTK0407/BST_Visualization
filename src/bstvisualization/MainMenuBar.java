@@ -104,46 +104,91 @@ public class MainMenuBar implements ActionListener {
         JMenuItem source = (JMenuItem) e.getSource();
 
         if (source == openItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             openFile();
             bstPanel.drawTree();
             System.out.println("Open file...");
         } else if (source == saveItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             saveFile();
             System.out.println("Save file...");
         } else if (source == clearItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.clearData();
             bstPanel.clearData();
             System.out.println("Clear data...");
         } else if (source == exitItem) {
             System.exit(0);
         } else if (source == preOItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.path.clear();
             bstTree.preOrder(bstTree.root);
+            bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("Pre-Order Traversal...");
         } else if (source == inOItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.path.clear();
             bstTree.inOrder(bstTree.root);
+            bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("In-Order Traversal...");
         } else if (source == postOItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.path.clear();
             bstTree.posOrder(bstTree.root);
+            bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("Post-Order Traversal...");
         } else if (source == bfsItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.path.clear();
             bstTree.path = bstTree.getNodesInBFSOrder();
+            bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("BFS Algorithm...");
         } else if (source == dfsItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             bstTree.path.clear();
             bstTree.preOrder(bstTree.root);
+            bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("DFS Algorithm...");
         } else if (source == docsItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             System.out.println("Open Documentation...");
         } else if (source == aboutItem) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
             System.out.println("About me");
         }
     }

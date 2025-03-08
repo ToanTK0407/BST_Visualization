@@ -94,30 +94,28 @@ public class BSTTree implements Serializable {
             return null;
         }
         path.add(currentNode);
-        if (currentNode.data < target) {
-            return delete(currentNode.left, target);
-        } else if (currentNode.data > target) {
-            return delete(currentNode.right, target);
+        if (target > currentNode.data) {
+            currentNode.right = delete(currentNode.right, target);
+        } else if (target < currentNode.data) {
+            currentNode.left = delete(currentNode.left, target);
         } else {
             if (currentNode.left == null) {
                 return currentNode.right;
             } else if (currentNode.right == null) {
                 return currentNode.left;
             }
-            // Tim nut nho nhat o phia ben phai
+            // Tìm node nhỏ nhất ở cây con phải và xóa nó
             currentNode.data = minValueNode(currentNode.right).data;
-            currentNode.right = delete(currentNode.right, target);
+            currentNode.right = delete(currentNode.right, currentNode.data);
         }
         return currentNode;
     }
 
-    // Tim nut nho nhat
     private BSTNode minValueNode(BSTNode node) {
-        BSTNode current = node;
-        while (current.left != null) {
-            current = current.left;
+        while (node.left != null) {
+            node = node.left;
         }
-        return current;
+        return node;
     }
 
     public void clearData() {

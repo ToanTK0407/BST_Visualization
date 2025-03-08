@@ -30,6 +30,15 @@ public class BSTPanel extends JPanel {
     private final int NODE_RADIUS = 36; // Bán kính node
     private final int HORIZONTAL_MARGIN = 50; // Lề ngang
     private final int VERTICAL_SPACING = 80; // Khoảng cách dọc giữa các tầng
+    private boolean flag = false;
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
 
     public BSTPanel(BSTTree bstTree) {
         this.bstTree = bstTree;
@@ -44,6 +53,9 @@ public class BSTPanel extends JPanel {
     }
 
     public void drawTree() {
+        if (isFlag()) {
+            return; // Không thực hiện nếu đang có timer chạy
+        }
         circles.clear();
         lines.clear();
 
@@ -115,6 +127,10 @@ public class BSTPanel extends JPanel {
     }
 
     public void drawColor() {
+        if (isFlag()) {
+            return; // Đang có timer chạy, không thực hiện
+        }
+        flag = true;
         drawTree();
         List<BSTNode> path = new ArrayList<>(bstTree.path);
 
@@ -129,6 +145,7 @@ public class BSTPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (index >= path.size()) {
                     ((Timer) e.getSource()).stop();
+                    flag = false;
                     return;
                 }
 
@@ -142,6 +159,10 @@ public class BSTPanel extends JPanel {
     }
 
     public void search(int data) {
+        if (isFlag()) {
+            return; // Không thực hiện nếu đang có timer chạy
+        }
+        flag = true;
         drawTree();
         bstTree.path.clear();
         bstTree.search(bstTree.root, data);
@@ -158,6 +179,7 @@ public class BSTPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if (index >= path.size()) {
                     ((Timer) e.getSource()).stop();
+                    flag = false;
                     return;
                 }
 
@@ -179,11 +201,88 @@ public class BSTPanel extends JPanel {
         timer.start();
     }
 
-    public void removeCircle(int data) {
-        circles.removeIf(c -> c.text.equals(String.valueOf(data)));
-
-        lines.removeIf(line -> line.childData == data || line.parentData == data);
+    public void drawTreeRemove(BSTNode srcNode) {
+        lines.clear();
+        for (BSTNode node : bstTree.getNodesInBFSOrder()) {
+            if (node.data == bstTree.root.data || node.data == srcNode.right.data || node.data == srcNode.left.data
+                    || node.data == srcNode.data) {
+                continue;
+            }
+            if (node.data == srcNode.right.left.data) {
+                lines.add(new Line(
+                        srcNode.parent.x + NODE_RADIUS / 2,
+                        srcNode.parent.y + NODE_RADIUS,
+                        node.x + NODE_RADIUS / 2,
+                        node.y, srcNode.parent.data, node.data));
+                lines.add(new Line(
+                        node.parent.x + NODE_RADIUS / 2,
+                        node.parent.y + NODE_RADIUS,
+                        node.x + NODE_RADIUS / 2,
+                        node.y, node.parent.data, node.data));
+                lines.add(new Line(
+                        srcNode.left.x + NODE_RADIUS / 2,
+                        srcNode.left.y + NODE_RADIUS,
+                        node.x + NODE_RADIUS / 2,
+                        node.y, srcNode.left.data, node.data));
+            } else {
+                lines.add(new Line(
+                        node.parent.x + NODE_RADIUS / 2,
+                        node.parent.y + NODE_RADIUS,
+                        node.x + NODE_RADIUS / 2,
+                        node.y, node.parent.data, node.data));
+            }
+        }
         repaint();
+    }
+
+    public void removeCircle(int data) {
+        if (isFlag()) {
+            return; // Không thực hiện nếu đang có timer chạy
+        }
+        flag = true;
+        drawTree();
+        bstTree.path.clear();
+        BSTNode srcNode = bstTree.search(bstTree.root, data);
+        List<BSTNode> path = new ArrayList<>(bstTree.path);
+
+        if (path.isEmpty()) {
+            return;
+        }
+
+        Timer timer = new Timer(2000, new ActionListener() {
+            private int index = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (index >= path.size()) {
+                    ((Timer) e.getSource()).stop();
+                    flag = false;
+                    circles.removeIf(c -> c.text.equals(String.valueOf(data)));
+                    lines.removeIf(line -> line.childData == data || line.parentData == data);
+                    bstTree.delete(bstTree.root, data);
+                    drawTree();
+                    return;
+                }
+
+                BSTNode currentNode = path.get(index);
+                if (index == path.size() - 1) {
+
+                    if (currentNode.data == data) {
+                        if (srcNode.right != null && srcNode.right.left != null) {
+                            drawTreeRemove(srcNode);
+                        }
+                        colorNode(currentNode.data, Color.GREEN);
+                    } else {
+                        colorNode(currentNode.data, Color.RED);
+                    }
+                } else {
+                    colorNode(currentNode.data, Color.YELLOW);
+                }
+                repaint();
+                index++;
+            }
+        });
+        timer.start();
     }
 
     @Override
