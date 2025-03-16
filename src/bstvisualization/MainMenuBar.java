@@ -32,6 +32,7 @@ public class MainMenuBar implements ActionListener {
     private final JMenuItem saveItem, openItem, clearItem, exitItem;
     private final JMenuItem preOItem, inOItem, postOItem;
     private final JMenuItem bfsItem, dfsItem;
+    private final JMenuItem findMax, findMin, balance;
     private final JMenuItem docsItem, aboutItem;
     private BSTTree bstTree;
     private BSTPanel bstPanel;
@@ -61,18 +62,24 @@ public class MainMenuBar implements ActionListener {
         preOItem = createMenuItem("Pre-Order", this);
         inOItem = createMenuItem("In-Order", this);
         postOItem = createMenuItem("Post-Order", this);
+        bfsItem = createMenuItem("BFS", this);
+        dfsItem = createMenuItem("DFS", this);
 
         traversalMenu.add(preOItem);
         traversalMenu.add(inOItem);
         traversalMenu.add(postOItem);
+        traversalMenu.add(bfsItem);
+        traversalMenu.add(dfsItem);
 
         // Algorithms Menu
         algorithmsMenu = new JMenu("Algorithms");
-        bfsItem = createMenuItem("BFS", this);
-        dfsItem = createMenuItem("DFS", this);
 
-        algorithmsMenu.add(bfsItem);
-        algorithmsMenu.add(dfsItem);
+        findMax = createMenuItem("Find Max", this);
+        findMin = createMenuItem("Find Min", this);
+        balance = createMenuItem("Balance", this);
+        algorithmsMenu.add(findMax);
+        algorithmsMenu.add(findMin);
+        algorithmsMenu.add(balance);
 
         // Help Menu
         helpMenu = new JMenu("Help");
@@ -178,6 +185,37 @@ public class MainMenuBar implements ActionListener {
             bstPanel.drawTree();
             bstPanel.drawColor();
             System.out.println("DFS Algorithm...");
+        } else if (source == findMax) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
+            bstTree.path.clear();
+            BSTNode node = bstTree.maxValueNode(bstTree.root);
+            System.out.println(node.data);
+            bstPanel.drawTree();
+            bstPanel.search(node.data);
+            System.out.println("Find max");
+        } else if (source == findMin) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
+            bstTree.path.clear();
+            BSTNode node = bstTree.minValueNode(bstTree.root);
+            System.out.println(node.data);
+            bstPanel.drawTree();
+            bstPanel.search(node.data);
+            System.out.println("Find min");
+        } else if (source == balance) {
+            if (bstPanel.isFlag()) {
+                System.out.println("Can't do this action now");
+                return;
+            }
+            bstTree.balanceEntireTree();
+            bstTree.path.clear();
+            bstPanel.drawTree();
+            System.out.println("Balance");
         } else if (source == docsItem) {
             if (bstPanel.isFlag()) {
                 System.out.println("Can't do this action now");

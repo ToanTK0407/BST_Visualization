@@ -217,6 +217,7 @@ public class ConfigurationPanel extends JPanel {
             System.out.println("Can't do this action now");
             return;
         }
+        bstPanel.drawTree();
         bstPanel.search(data);
         System.out.println("Searching node: " + data);
     }
@@ -226,7 +227,6 @@ public class ConfigurationPanel extends JPanel {
             System.out.println("Can't do this action now");
             return;
         }
-
         bstTree.inOrder(bstTree.root);
         bstPanel.removeCircle(data);
         System.out.println("Removing node: " + data);

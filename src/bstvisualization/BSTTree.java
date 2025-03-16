@@ -111,9 +111,16 @@ public class BSTTree implements Serializable {
         return currentNode;
     }
 
-    private BSTNode minValueNode(BSTNode node) {
+    public BSTNode minValueNode(BSTNode node) {
         while (node.left != null) {
             node = node.left;
+        }
+        return node;
+    }
+
+    public BSTNode maxValueNode(BSTNode node) {
+        while (node.right != null) {
+            node = node.right;
         }
         return node;
     }
@@ -169,6 +176,122 @@ public class BSTTree implements Serializable {
                 queue.add(current.right);
         }
         return nodes;
+    }
+
+    int height(BSTNode node) {
+        if (node == null)
+            return 0;
+        return node.height;
+    }
+
+    int getBalance(BSTNode node) {
+        if (node == null)
+            return 0;
+        return height(node.left) - height(node.right);
+    }
+
+    public BSTNode balanceTree(BSTNode node) {
+        if (node == null)
+            return null;
+
+        // Cân bằng cây con trái và phải
+        node.left = balanceTree(node.left);
+        if (node.left != null) {
+            node.left.parent = node; // Cập nhật cha của cây con trái
+        }
+
+        node.right = balanceTree(node.right);
+        if (node.right != null) {
+            node.right.parent = node; // Cập nhật cha của cây con phải
+        }
+
+        // Cập nhật chiều cao
+        node.height = 1 + Math.max(height(node.left), height(node.right));
+
+        // Kiểm tra balance factor
+        int balance = getBalance(node);
+
+        // Xử lý 4 trường hợp mất cân bằng
+        // Left Left
+        if (balance > 1 && getBalance(node.left) >= 0) {
+            BSTNode newRoot = rightRotate(node);
+            newRoot.parent = node.parent; // Cập nhật cha của newRoot
+            return newRoot;
+        }
+        // Left Right
+        if (balance > 1 && getBalance(node.left) < 0) {
+            node.left = leftRotate(node.left);
+            node.left.parent = node; // Cập nhật cha sau phép quay trái
+            BSTNode newRoot = rightRotate(node);
+            newRoot.parent = node.parent;
+            return newRoot;
+        }
+        // Right Right
+        if (balance < -1 && getBalance(node.right) <= 0) {
+            BSTNode newRoot = leftRotate(node);
+            newRoot.parent = node.parent;
+            return newRoot;
+        }
+        // Right Left
+        if (balance < -1 && getBalance(node.right) > 0) {
+            node.right = rightRotate(node.right);
+            node.right.parent = node; // Cập nhật cha sau phép quay phải
+            BSTNode newRoot = leftRotate(node);
+            newRoot.parent = node.parent;
+            return newRoot;
+        }
+
+        return node;
+    }
+
+    // Hàm quay phải (cập nhật parent)
+    private BSTNode rightRotate(BSTNode y) {
+        BSTNode x = y.left;
+        BSTNode T2 = x.right;
+
+        // Thực hiện quay
+        x.right = y;
+        y.left = T2;
+
+        // Cập nhật parent
+        x.parent = y.parent; // x thay thế vị trí của y
+        y.parent = x; // y trở thành con của x
+        if (T2 != null) {
+            T2.parent = y; // Cập nhật parent cho T2
+        }
+
+        // Cập nhật chiều cao
+        y.height = Math.max(height(y.left), height(y.right)) + 1;
+        x.height = Math.max(height(x.left), height(x.right)) + 1;
+
+        return x;
+    }
+
+    // Hàm quay trái (cập nhật parent)
+    private BSTNode leftRotate(BSTNode x) {
+        BSTNode y = x.right;
+        BSTNode T2 = y.left;
+
+        // Thực hiện quay
+        y.left = x;
+        x.right = T2;
+
+        // Cập nhật parent
+        y.parent = x.parent; // y thay thế vị trí của x
+        x.parent = y; // x trở thành con của y
+        if (T2 != null) {
+            T2.parent = x; // Cập nhật parent cho T2
+        }
+
+        // Cập nhật chiều cao
+        x.height = Math.max(height(x.left), height(x.right)) + 1;
+        y.height = Math.max(height(y.left), height(y.right)) + 1;
+
+        return y;
+    }
+
+    public void balanceEntireTree() {
+        root = balanceTree(root);
     }
 
     // Tính chiều cao cây

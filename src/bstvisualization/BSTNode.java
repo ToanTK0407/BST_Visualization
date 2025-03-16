@@ -18,6 +18,7 @@ public class BSTNode {
     int index;
     int x;
     int y;
+    int height;
     BSTNode left;
     BSTNode right;
     BSTNode parent;
@@ -33,6 +34,7 @@ public class BSTNode {
         this.right = null;
         this.parent = null;
         this.count = 1;
+        this.height = 1;
     }
 
     public boolean isLeaf() {
